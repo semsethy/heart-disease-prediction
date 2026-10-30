@@ -1,0 +1,31 @@
+# Virtual environments
+env/
+.venv/
+venv/
+
+# Model artifacts
+models/
+*.joblib
+*.pkl
+*.pickle
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

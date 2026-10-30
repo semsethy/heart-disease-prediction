@@ -1,0 +1,100 @@
+@baseUrl = http://127.0.0.1:8000
+
+### Health
+GET {{baseUrl}}/health
+
+### Metadata
+GET {{baseUrl}}/models
+
+### Single prediction (likely heart disease)
+POST {{baseUrl}}/heart/predict
+Content-Type: application/json
+
+{
+  "Age": 48,
+  "Sex": "F",
+  "ChestPainType": "ASY",
+  "RestingBP": 138,
+  "Cholesterol": 214,
+  "FastingBS": 0,
+  "RestingECG": "Normal",
+  "MaxHR": 108,
+  "ExerciseAngina": "Y",
+  "Oldpeak": 1.5,
+  "ST_Slope": "Flat"
+}
+
+### Single prediction (cholesterol not measured -> send 0)
+POST {{baseUrl}}/heart/predict
+Content-Type: application/json
+
+{
+  "Age": 60,
+  "Sex": "M",
+  "ChestPainType": "NAP",
+  "RestingBP": 130,
+  "Cholesterol": 0,
+  "FastingBS": 1,
+  "RestingECG": "ST",
+  "MaxHR": 120,
+  "ExerciseAngina": "N",
+  "Oldpeak": 0.5,
+  "ST_Slope": "Flat"
+}
+
+### Batch prediction
+POST {{baseUrl}}/heart/predict/batch
+Content-Type: application/json
+
+[
+  {
+    "Age": 40,
+    "Sex": "M",
+    "ChestPainType": "ATA",
+    "RestingBP": 140,
+    "Cholesterol": 289,
+    "FastingBS": 0,
+    "RestingECG": "Normal",
+    "MaxHR": 172,
+    "ExerciseAngina": "N",
+    "Oldpeak": 0,
+    "ST_Slope": "Up"
+  },
+  {
+    "Age": 48,
+    "Sex": "F",
+    "ChestPainType": "ASY",
+    "RestingBP": 138,
+    "Cholesterol": 214,
+    "FastingBS": 0,
+    "RestingECG": "Normal",
+    "MaxHR": 108,
+    "ExerciseAngina": "Y",
+    "Oldpeak": 1.5,
+    "ST_Slope": "Flat"
+  }
+]
+
+### Invalid category (422)
+POST {{baseUrl}}/heart/predict
+Content-Type: application/json
+
+{
+  "Age": 48,
+  "Sex": "X",
+  "ChestPainType": "ASY",
+  "RestingBP": 138,
+  "Cholesterol": 214,
+  "FastingBS": 0,
+  "RestingECG": "Normal",
+  "MaxHR": 108,
+  "ExerciseAngina": "Y",
+  "Oldpeak": 1.5,
+  "ST_Slope": "Flat"
+}
+
+### Invalid empty batch (422)
+POST {{baseUrl}}/heart/predict/batch
+Content-Type: application/json
+
+[]
