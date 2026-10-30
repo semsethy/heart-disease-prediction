@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Heart Disease Risk Check</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Heart Disease Risk Check</h1>
+    <p class="subtitle">Enter a patient's clinical measurements to get the model's prediction.</p>
+    <p id="model-status" class="status">Checking model…</p>
+  </header>
+
+  <main>
+    <form id="patient-form" novalidate>
+      <div class="examples">
+        <span>Try an example:</span>
+        <button type="button" class="link" data-example="low">Low-risk patient</button>
+        <button type="button" class="link" data-example="high">High-risk patient</button>
+      </div>
+
+      <fieldset>
+        <legend>Patient</legend>
+        <div class="grid">
+        <label>Age (years)
+          <input name="Age" type="number" min="1" max="120" step="1" required>
+        </label>
+        <label>Sex
+          <select name="Sex" required>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
+        </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Symptoms</legend>
+        <div class="grid">
+        <label>Chest pain type
+          <select name="ChestPainType" required>
+            <option value="ASY">Asymptomatic (no chest pain)</option>
+            <option value="ATA">Atypical angina</option>
+            <option value="NAP">Non-anginal pain</option>
+            <option value="TA">Typical angina</option>
+          </select>
+        </label>
+        <label>Chest pain during exercise
+          <select name="ExerciseAngina" required>
+            <option value="N">No</option>
+            <option value="Y">Yes</option>
+          </select>
+        </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Measurements</legend>
+        <div class="grid">
+        <label>Resting blood pressure (mm Hg)
+          <input name="RestingBP" type="number" min="50" max="250" step="1" required>
+        </label>
+        <div class="field">
+          <label>Cholesterol (mg/dl)
+            <input name="Cholesterol" type="number" min="50" max="700" step="1" required>
+          </label>
+          <label class="check"><input type="checkbox" id="chol-unknown"> Not measured</label>
+        </div>
+        <label>Fasting blood sugar above 120 mg/dl
+          <select name="FastingBS" required>
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </label>
+        <label>Maximum heart rate reached
+          <input name="MaxHR" type="number" min="40" max="250" step="1" required>
+        </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>ECG results</legend>
+        <div class="grid">
+        <label>Resting ECG
+          <select name="RestingECG" required>
+            <option value="Normal">Normal</option>
+            <option value="ST">ST-T wave abnormality</option>
+            <option value="LVH">Left ventricular hypertrophy</option>
+          </select>
+        </label>
+        <label>ST depression (Oldpeak)
+          <input name="Oldpeak" type="number" min="-5" max="10" step="0.1" required>
+        </label>
+        <label>ST slope during peak exercise
+          <select name="ST_Slope" required>
+            <option value="Up">Upsloping</option>
+            <option value="Flat">Flat</option>
+            <option value="Down">Downsloping</option>
+          </select>
+        </label>
+        </div>
+      </fieldset>
+
+      <p id="form-error" class="error" role="alert" hidden></p>
+      <button type="submit" id="submit">Predict</button>
+    </form>
+
+    <section id="result" class="card" aria-live="polite" hidden>
+      <p class="result-label" id="result-label"></p>
+      <p class="result-prob"><span id="result-prob"></span> estimated chance of heart disease</p>
+      <div class="meter" aria-hidden="true">
+        <div class="meter-fill" id="meter-fill"></div>
+        <div class="meter-threshold" id="meter-threshold"></div>
+      </div>
+      <p class="result-note" id="result-note"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>For learning only. This is not medical advice.</strong> The model was trained on 918 patients from a public Kaggle dataset and can be wrong. Talk to a doctor about heart health.</p>
+    <p><a href="/docs">API documentation</a></p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

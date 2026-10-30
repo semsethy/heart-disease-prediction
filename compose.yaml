@@ -1,0 +1,7 @@
+services:
+  heart-api:
+    build: .
+    image: heart-disease-prediction
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

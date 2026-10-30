@@ -7,7 +7,37 @@ FastAPI for predictions.
 > Educational use only. This is not medical advice and must not be used to
 > diagnose anyone.
 
-## Quick start
+## Run with Docker
+
+The easiest way to run the app. You only need
+[Docker](https://www.docker.com/products/docker-desktop/) installed.
+
+```bash
+docker compose up -d --build
+```
+
+Open **http://localhost:8000**. The model is trained while the image builds,
+so there is no separate training step.
+
+Useful commands:
+
+```bash
+docker compose ps        # status (shows "healthy" when ready)
+docker compose logs -f   # follow the server logs
+docker compose down      # stop and remove the container
+```
+
+To use a different port, change the left number in `compose.yaml`, for
+example `"8080:8000"`, then open http://localhost:8080.
+
+Without Compose:
+
+```bash
+docker build -t heart-disease-prediction .
+docker run -d -p 8000:8000 --name heart-api heart-disease-prediction
+```
+
+## Run without Docker
 
 Use Python 3.11 or newer. Run these commands from the project folder.
 
@@ -29,10 +59,11 @@ Or on Windows PowerShell:
 .venv\Scripts\Activate.ps1
 ```
 
-Install dependencies:
+Install dependencies (`requirements-dev.txt` adds the notebook and test tools
+to the app's `requirements.txt`):
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
 ### 2. Train the model
@@ -62,7 +93,10 @@ python train_heart.py --algorithm "logistic regression"
 python -m uvicorn app.main:app --reload
 ```
 
-Open **http://127.0.0.1:8000/docs** to try the API. Under
+Open **http://127.0.0.1:8000** to use the web page: fill in the patient's
+details (or click an example) and press **Predict**.
+
+Open **http://127.0.0.1:8000/docs** to try the API directly. Under
 `POST /heart/predict`, click **Try it out**, use the example request, and
 click **Execute**.
 
@@ -73,6 +107,7 @@ load the new model.
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
+| GET | `/` | Web page for single predictions |
 | GET | `/health` | Check whether the model is loaded |
 | GET | `/models` | View the model, features, metrics, and threshold |
 | POST | `/heart/predict` | Predict one patient |
@@ -147,7 +182,7 @@ model prepares them the same way it did during training.
 
 ## Results
 
-From one training run (random forest, threshold 0.41, 184 test patients):
+From one training run on macOS (random forest, threshold 0.41, 184 test patients):
 
 | Metric | Score |
 | --- | --- |
@@ -157,6 +192,10 @@ From one training run (random forest, threshold 0.41, 184 test patients):
 | Recall | 0.951 |
 | F1 | 0.907 |
 | ROC AUC | 0.941 |
+
+Training on Linux (inside Docker) can give slightly different numbers, for
+example a threshold of 0.39 and accuracy of 0.886, because random forests can
+vary a little between platforms.
 
 The model found 97 of 102 heart disease patients in the test set (5 missed)
 and wrongly flagged 15 of 82 healthy patients. `ST_Slope` is the most
@@ -169,6 +208,7 @@ app/
   main.py                 API endpoints and startup
   schemas.py              Request and response validation
   ml.py                   Model loading and prediction
+  static/                 Web page (index.html, styles.css, app.js)
 data/heart/
   heart.csv               Training dataset
 models/
@@ -178,7 +218,10 @@ notebooks/
 train_heart.py            Training script
 requests.http             Example API requests
 tests/                    Automated tests
-requirements.txt          Dependencies
+requirements.txt          App dependencies (used by Docker)
+requirements-dev.txt      Adds notebook and test tools
+Dockerfile                Container image (trains the model during build)
+compose.yaml              Runs the container on port 8000
 ```
 
 ## Dataset

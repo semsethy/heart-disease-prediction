@@ -1,7 +1,10 @@
 """Run: python -m uvicorn app.main:app --reload"""
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Annotated
 from fastapi import FastAPI, HTTPException, Request, Body
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from app import ml
 from app.schemas import Patient, HeartPrediction, ModelInfo
 
@@ -15,6 +18,8 @@ async def lifespan(app):
 
 app = FastAPI(title='Heart Disease Prediction API', version='1.0.0', lifespan=lifespan,
               description='Classroom classifier for the Kaggle heart failure dataset. Not medical advice.')
+STATIC = Path(__file__).resolve().parent / 'static'
+app.mount('/static', StaticFiles(directory=STATIC), name='static')
 UNAVAILABLE = {503: {'description': 'Model missing. Train and restart the API.'}}
 
 
@@ -23,6 +28,11 @@ def require_model(request):
     if bundle is None:
         raise HTTPException(503, 'Model not loaded. Run python train_heart.py and restart the API.')
     return bundle
+
+
+@app.get('/', include_in_schema=False)
+def home():
+    return FileResponse(STATIC / 'index.html')
 
 
 @app.get('/health')

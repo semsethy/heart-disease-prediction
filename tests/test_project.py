@@ -62,3 +62,11 @@ def test_missing_model(monkeypatch, examples):
         assert client.get('/models').json()[0]['loaded'] is False
         assert client.post('/heart/predict', json=examples[0]).status_code == 503
         assert client.post('/heart/predict/batch', json=examples).status_code == 503
+
+
+def test_frontend_is_served(client):
+    page = client.get('/')
+    assert page.status_code == 200 and 'patient-form' in page.text
+    for asset in ['/static/app.js', '/static/styles.css']:
+        assert client.get(asset).status_code == 200
+    assert '/' not in client.get('/openapi.json').json()['paths']
